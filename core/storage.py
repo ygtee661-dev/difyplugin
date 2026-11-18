@@ -55,6 +55,21 @@ class ConversationStore:
         except Exception as e:
             logger.warning("Failed to clear conversation id: %s", e)
 
+    def is_ai_paused(self, source: dict) -> bool:
+        key = self.key(source) + ":ai_paused"
+        try:
+            return self.storage.get(key) == b"1"
+        except Exception:
+            logger.exception("Failed to read AI pause status")
+            return True
+
+    def set_ai_paused(self, source: dict, paused: bool) -> None:
+        key = self.key(source) + ":ai_paused"
+        if paused:
+            self.storage.set(key, b"1")
+        else:
+            self.storage.delete(key)
+
 
 class EventDeduper:
     """
