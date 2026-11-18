@@ -103,6 +103,13 @@ class LineEndpoint(Endpoint):
         reply_token = event.get("replyToken")
         text = event["message"].get("text", "")
         store = ConversationStore(self.session.storage, settings["channel_secret"])
+       
+        if "結緣方案" in text.strip():
+            store.set_ai_paused(source, True)
+            return
+
+        if store.is_ai_paused(source):
+            return
 
         if text.strip().lower() == CLEAR_COMMAND:
             store.clear_conversation(source)
